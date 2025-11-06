@@ -76,29 +76,30 @@ public_wiki_pages = frappe.get_all(
 )
 
 
-doctype = "HD Article"
-k = 0
-for page in public_wiki_pages:
-	k = k + 1
-	if k >= 10:
-		break
-	wiki_page = frappe.get_doc("Wiki Page", page.name)
+def main():
+	doctype = "HD Article"
+	k = 0
+	for page in public_wiki_pages:
+		k = k + 1
+		if k >= 10:
+			break
+		wiki_page = frappe.get_doc("Wiki Page", page.name)
 
-	doc_dict = {
-		"doctype": doctype,
-		"title": wiki_page.title,
-		"content": fix_images(frappe.utils.markdown(wiki_page.content)),
-		"category": get_category(page.name),
-		"status": "Published",
-	}
-	hd_article = client.get_value(doctype, "name", {"title": wiki_page.title})
-	if doc_dict["category"] is None:
-		continue
-	if not hd_article:
-		hd_article = client.insert(doc_dict)
-	else:
-		doc_dict.pop("doctype")
-		hd_article = client.get_doc("HD Article", hd_article["name"])
-		for key, value in doc_dict.items():
-			hd_article[key] = value
-		client.update(hd_article)
+		doc_dict = {
+			"doctype": doctype,
+			"title": wiki_page.title,
+			"content": fix_images(frappe.utils.markdown(wiki_page.content)),
+			"category": get_category(page.name),
+			"status": "Published",
+		}
+		hd_article = client.get_value(doctype, "name", {"title": wiki_page.title})
+		if doc_dict["category"] is None:
+			continue
+		if not hd_article:
+			hd_article = client.insert(doc_dict)
+		else:
+			doc_dict.pop("doctype")
+			hd_article = client.get_doc("HD Article", hd_article["name"])
+			for key, value in doc_dict.items():
+				hd_article[key] = value
+			client.update(hd_article)

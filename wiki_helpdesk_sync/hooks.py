@@ -143,10 +143,10 @@ required_apps = ["frappe/wiki"]
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"wiki_helpdesk_sync.tasks.all"
-# 	],
+scheduler_events = {
+	"hourly": [
+		"wiki_helpdesk_sync.scripts.sync.main"
+	],
 # 	"daily": [
 # 		"wiki_helpdesk_sync.tasks.daily"
 # 	],
