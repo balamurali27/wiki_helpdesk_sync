@@ -159,7 +159,7 @@ scheduler_events = {
 # 	"monthly": [
 # 		"wiki_helpdesk_sync.tasks.monthly"
 # 	],
-# }
+}
 
 # Testing
 # -------
