@@ -65,18 +65,19 @@ def fix_images(html: str):
 	return move_images_outside_para(html)
 
 
-settings = HelpdeskSettings("Helpdesk Settings")
-
-client = FrappeClient(
-	settings.site_url, api_key=settings.api_key, api_secret=settings.get_password("api_secret")
-)
-
-public_wiki_pages = frappe.get_all(
-	"Wiki Page", filters={"published": 1, "allow_guest": 1, "route": ("like", "%cloud%")}
-)
-
-
 def main():
+	settings = HelpdeskSettings("Helpdesk Settings")
+	if not settings.api_key or not settings.api_secret or not settings.site_url:
+		return
+
+	client = FrappeClient(
+		settings.site_url, api_key=settings.api_key, api_secret=settings.get_password("api_secret")
+	)
+
+	public_wiki_pages = frappe.get_all(
+		"Wiki Page", filters={"published": 1, "allow_guest": 1, "route": ("like", "%cloud%")}
+	)
+
 	doctype = "HD Article"
 	k = 0
 	for page in public_wiki_pages:
