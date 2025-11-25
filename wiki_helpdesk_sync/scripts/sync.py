@@ -69,7 +69,7 @@ def main():
 	settings = HelpdeskSettings("Helpdesk Settings")
 	if not settings.api_key or not settings.api_secret or not settings.site_url:
 		return
-
+	global client
 	client = FrappeClient(
 		settings.site_url, api_key=settings.api_key, api_secret=settings.get_password("api_secret")
 	)
