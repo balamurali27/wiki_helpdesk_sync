@@ -79,11 +79,7 @@ def main():
 	)
 
 	doctype = "HD Article"
-	k = 0
 	for page in public_wiki_pages:
-		k = k + 1
-		if k >= 10:
-			break
 		wiki_page = frappe.get_doc("Wiki Page", page.name)
 
 		doc_dict = {
