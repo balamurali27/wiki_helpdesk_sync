@@ -18,8 +18,8 @@ def get_category(page_name):
 
 	hd_category = client.get_value(
 		"HD Article Category",
-		{"category_name": category},
 		"name",
+		{"category_name": category},
 	)  # Frappe Cloud children
 
 	if not hd_category:
