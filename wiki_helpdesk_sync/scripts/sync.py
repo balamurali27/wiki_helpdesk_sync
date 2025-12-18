@@ -65,6 +65,13 @@ def fix_images(html: str):
 	return move_images_outside_para(html)
 
 
+def get_html(content: str) -> str:
+	if frappe.utils.is_markdown(content):
+		content = frappe.utils.md_to_html(content)
+		content = content.replace("<!-- markdown -->", "")
+	return frappe.utils.sanitize_html(content, linkify=True)
+
+
 def main():
 	settings = HelpdeskSettings("Helpdesk Settings")
 	if not settings.api_key or not settings.api_secret or not settings.site_url:
@@ -85,7 +92,7 @@ def main():
 		doc_dict = {
 			"doctype": doctype,
 			"title": wiki_page.title,
-			"content": fix_images(frappe.utils.markdown(wiki_page.content)),
+			"content": fix_images(get_html(wiki_page.content)),
 			"category": get_or_create_hd_category(page.name),
 			"status": "Published",
 		}
