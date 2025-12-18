@@ -5,7 +5,7 @@ from frappe.frappeclient import FrappeClient
 from wiki_helpdesk_sync.wiki_helpdesk_sync.doctype.helpdesk_settings.helpdesk_settings import HelpdeskSettings
 
 
-def get_category(page_name):
+def get_or_create_hd_category(page_name):
 	"""Finds category of wiki page from child table"""
 	global client
 	category = frappe.db.get_value(
@@ -86,12 +86,14 @@ def main():
 			"doctype": doctype,
 			"title": wiki_page.title,
 			"content": fix_images(frappe.utils.markdown(wiki_page.content)),
-			"category": get_category(page.name),
+			"category": get_or_create_hd_category(page.name),
 			"status": "Published",
 		}
-		hd_article = client.get_value(doctype, "name", {"title": wiki_page.title})
 		if doc_dict["category"] is None:
 			continue
+		hd_article = client.get_value(
+			doctype, "name", {"title": wiki_page.title, "category": doc_dict["category"]}
+		)
 		if not hd_article:
 			hd_article = client.insert(doc_dict)
 		else:
