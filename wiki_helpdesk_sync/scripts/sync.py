@@ -72,6 +72,24 @@ def get_html(content: str) -> str:
 	return frappe.utils.sanitize_html(content, linkify=True)
 
 
+def normalize_html(html: str) -> str:
+	"""Helpdesk re-sanitizes content on save (e.g. adds rel to anchors), so ignore that while comparing"""
+	soup = BeautifulSoup(html or "", "html.parser")
+	for anchor in soup.find_all("a"):
+		anchor.attrs.pop("rel", None)
+	return str(soup)
+
+
+def needs_update(hd_article, doc_dict) -> bool:
+	for key, value in doc_dict.items():
+		if key == "content":
+			if normalize_html(hd_article.get(key)) != normalize_html(value):
+				return True
+		elif hd_article.get(key) != value:
+			return True
+	return False
+
+
 def main():
 	settings = HelpdeskSettings("Helpdesk Settings")
 	if not settings.api_key or not settings.api_secret or not settings.site_url:
@@ -106,6 +124,8 @@ def main():
 		else:
 			doc_dict.pop("doctype")
 			hd_article = client.get_doc("HD Article", hd_article["name"])
+			if not needs_update(hd_article, doc_dict):
+				continue
 			for key, value in doc_dict.items():
 				hd_article[key] = value
 			client.update(hd_article)
